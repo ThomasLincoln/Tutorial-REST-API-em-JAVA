@@ -1,4 +1,4 @@
-package io.thomaslincoln.restapi;
+package io.thomaslincoln.restapi.models;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonProperty.Access;
