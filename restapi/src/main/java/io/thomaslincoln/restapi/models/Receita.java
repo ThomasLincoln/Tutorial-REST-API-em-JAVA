@@ -13,9 +13,19 @@ import jakarta.persistence.Table;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
+import lombok.AllArgsConstructor;
+import lombok.EqualsAndHashCode;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 @Entity
 @Table(name = Receita.TABLE_NAME)
+@Getter
+@Setter
+@EqualsAndHashCode
+@NoArgsConstructor
+@AllArgsConstructor
 public class Receita {
   public static final String TABLE_NAME = "Receita";
 
@@ -46,6 +56,7 @@ public class Receita {
   @JoinColumn(name = "usuario_id", nullable = false)
   private Usuario usuario;
 
+  // Relacionamento
   @NotNull
   @Column(name = "ingredientes", nullable = false)
   private List<Ingrediente> ingrediente;

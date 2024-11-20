@@ -1,5 +1,9 @@
 package io.thomaslincoln.restapi.models;
 
+import java.util.ArrayList;
+import java.util.List;
+
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonProperty.Access;
 
@@ -8,12 +12,23 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
+import lombok.AllArgsConstructor;
+import lombok.EqualsAndHashCode;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 @Entity
 @Table(name = Usuario.TABLE_NAME)
+@Getter
+@Setter
+@EqualsAndHashCode
+@NoArgsConstructor
+@AllArgsConstructor
 public class Usuario {
 
   public static final String TABLE_NAME = "Usuario";
@@ -43,4 +58,8 @@ public class Usuario {
   @Column(name = "email", length = 30, nullable = false)
   @Size(min = 7, max = 30)
   private String email;
+
+  @OneToMany(mappedBy = "usuario")
+  @JsonIgnore
+  private List<Receita> receitas = new ArrayList<>();
 }

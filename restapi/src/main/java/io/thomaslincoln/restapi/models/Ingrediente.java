@@ -9,9 +9,19 @@ import jakarta.persistence.Table;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
+import lombok.AllArgsConstructor;
+import lombok.EqualsAndHashCode;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 @Entity
 @Table(name = Ingrediente.TABLE_NAME)
+@Getter
+@Setter
+@EqualsAndHashCode
+@NoArgsConstructor
+@AllArgsConstructor
 public class Ingrediente {
   public static final String TABLE_NAME = "Ingrediente";
 
@@ -32,5 +42,4 @@ public class Ingrediente {
   @NotBlank
   @Column(name = "unidade", length = 10, nullable = false)
   private String unidade;
-
 }
