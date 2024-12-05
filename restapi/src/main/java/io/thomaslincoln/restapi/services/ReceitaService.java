@@ -1,5 +1,6 @@
 package io.thomaslincoln.restapi.services;
 
+import java.util.List;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -46,5 +47,9 @@ public class ReceitaService {
     } catch (Exception e) {
       throw new RuntimeException("Não é possível apagar a receita.");
     }
+  }
+
+  public List<Receita> findAllByUserId(Long userId){
+    return receitaRepository.findByUsuarioId(userId);
   }
 }
