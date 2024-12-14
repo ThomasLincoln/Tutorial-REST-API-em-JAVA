@@ -23,7 +23,7 @@ import lombok.Setter;
 @NoArgsConstructor
 @AllArgsConstructor
 public class Ingrediente {
-  public static final String TABLE_NAME = "Ingrediente";
+  public static final String TABLE_NAME = "ingredientes";
 
   @Id
   @GeneratedValue(strategy = GenerationType.IDENTITY)

@@ -3,12 +3,13 @@ package io.thomaslincoln.restapi.services;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 
 import io.thomaslincoln.restapi.models.Ingrediente;
 import io.thomaslincoln.restapi.repositories.IngredienteRepository;
 import jakarta.transaction.Transactional;
 
-@Transactional
+@Service
 public class IngredienteService {
 
   @Autowired

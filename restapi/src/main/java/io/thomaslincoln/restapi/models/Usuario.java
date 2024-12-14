@@ -31,7 +31,7 @@ import lombok.Setter;
 @AllArgsConstructor
 public class Usuario {
 
-  public static final String TABLE_NAME = "Usuario";
+  public static final String TABLE_NAME = "usuarios";
 
   @Id
   @GeneratedValue(strategy = GenerationType.IDENTITY)

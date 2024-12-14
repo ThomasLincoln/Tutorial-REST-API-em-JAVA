@@ -22,7 +22,7 @@ import org.springframework.web.bind.annotation.PutMapping;
 
 
 @RestController
-@RequestMapping("/usario")
+@RequestMapping("/usuario")
 @Validated
 public class UsuarioController {
 

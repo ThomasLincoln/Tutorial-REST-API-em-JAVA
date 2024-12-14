@@ -1,5 +1,6 @@
 package io.thomaslincoln.restapi.models;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import jakarta.persistence.Column;
@@ -11,7 +12,6 @@ import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
 import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 import lombok.AllArgsConstructor;
 import lombok.EqualsAndHashCode;
@@ -27,7 +27,7 @@ import lombok.Setter;
 @NoArgsConstructor
 @AllArgsConstructor
 public class Receita {
-  public static final String TABLE_NAME = "Receita";
+  public static final String TABLE_NAME = "receitas";
 
   @Id
   @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -53,11 +53,10 @@ public class Receita {
   private String dificuldade;
 
   @ManyToOne
-  @JoinColumn(name = "usuario_id", nullable = false)
+  @JoinColumn(name = "usuario_id", nullable = false, updatable = false)
   private Usuario usuario;
 
   // Relacionamento
-  @NotNull
-  @Column(name = "ingredientes", nullable = false)
-  private List<Ingrediente> ingrediente;
+  @Column(name = "ingredientes")
+  private List<Long> ingrediente = new ArrayList<>();
 }
