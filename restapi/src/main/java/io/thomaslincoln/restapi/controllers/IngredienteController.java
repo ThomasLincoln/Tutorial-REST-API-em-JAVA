@@ -20,7 +20,7 @@ import io.thomaslincoln.restapi.services.IngredienteService;
 import jakarta.validation.Valid;
 
 @RestController
-@RequestMapping("/ingredientes")
+@RequestMapping("/ingrediente")
 @Validated
 public class IngredienteController {
 

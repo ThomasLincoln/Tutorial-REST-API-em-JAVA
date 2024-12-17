@@ -1,15 +1,17 @@
 package io.thomaslincoln.restapi.models;
 
-import java.util.ArrayList;
 import java.util.List;
 
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
+import jakarta.persistence.Lob;
 import jakarta.persistence.ManyToOne;
+import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
@@ -39,12 +41,13 @@ public class Receita {
   @Size(min = 3, max = 60)
   private String nome;
 
-  @Column(name="descricao", length = 255)
+  @Column(name="descricao", length = 500)
   private String descricao;
 
   @Column(name = "tempo_preparo")
   private Integer tempoDePreparo;
 
+  @Lob
   @NotBlank
   @Column(name = "modo_preparo", nullable = false)
   private String modoDePreparo;
@@ -57,6 +60,6 @@ public class Receita {
   private Usuario usuario;
 
   // Relacionamento
-  @Column(name = "ingredientes")
-  private List<Long> ingrediente = new ArrayList<>();
+  @OneToMany(mappedBy = "receita", cascade = CascadeType.ALL, orphanRemoval = true)
+  private List<ReceitaIngrediente> ingredientes;
 }

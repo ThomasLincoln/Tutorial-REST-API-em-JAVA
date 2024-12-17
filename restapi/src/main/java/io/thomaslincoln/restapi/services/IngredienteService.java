@@ -31,7 +31,6 @@ public class IngredienteService {
   public Ingrediente update(Ingrediente obj) {
     Ingrediente novoIngrediente = findById(obj.getId());
     novoIngrediente.setNome(obj.getNome());
-    novoIngrediente.setQuantidade(obj.getQuantidade());
     novoIngrediente.setUnidade(obj.getUnidade());
     return this.ingredienteRepository.save(novoIngrediente);
   }

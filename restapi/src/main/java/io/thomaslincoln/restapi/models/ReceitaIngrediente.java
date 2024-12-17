@@ -6,8 +6,7 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
-import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.Size;
+import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
@@ -15,26 +14,29 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 @Entity
-@Table(name = Ingrediente.TABLE_NAME)
+@Table(name = "receita_ingredientes")
 @Getter
 @Setter
 @EqualsAndHashCode
 @NoArgsConstructor
 @AllArgsConstructor
-public class Ingrediente {
-  public static final String TABLE_NAME = "ingredientes";
+public class ReceitaIngrediente {
 
   @Id
   @GeneratedValue(strategy = GenerationType.IDENTITY)
   @Column(name = "id", unique = true)
   private Long id;
 
-  @NotBlank
-  @Column(name = "nome", length = 60, nullable = false)
-  @Size(min = 3, max = 60)
-  private String nome;
+  @Column(name = "receita_id", nullable = false)
+  private Long receita;
 
-  @NotBlank
+  @Column(name = "ingrediente_id", nullable = false)
+  private Long ingrediente;
+
+  @NotNull
+  @Column(name = "quantidade", nullable = false)
+  private Double quantidade;
+
   @Column(name = "unidade", length = 50, nullable = false)
   private String unidade;
 }

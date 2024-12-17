@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import io.thomaslincoln.restapi.models.Receita;
+import io.thomaslincoln.restapi.models.ReceitaIngrediente;
 import io.thomaslincoln.restapi.services.ReceitaService;
 import jakarta.validation.Valid;
 
@@ -33,12 +34,20 @@ public class ReceitaController {
 
   // Create
   @PostMapping()
-  public ResponseEntity<Void> create(@Valid @RequestBody Receita entity) {
+  public ResponseEntity<Void> createReceita(@Valid @RequestBody Receita entity) {
     this.receitaService.create(entity);
     URI uri = ServletUriComponentsBuilder.fromCurrentRequest()
         .path("/{id}").buildAndExpand(entity.getId()).toUri();
     return ResponseEntity.created(uri).build();
   }
+
+  @PostMapping("/{receitaId}/ingredientes")
+  public ResponseEntity<Void> adicionarIngrediente(@PathVariable Long receitaId,
+    @RequestBody List<ReceitaIngrediente> ingredientes) {
+      receitaService.addIngredientesToReceita(receitaId, ingredientes);
+      return ResponseEntity.noContent().build();
+  }
+  
 
   // Read
   @GetMapping("/{id}")
