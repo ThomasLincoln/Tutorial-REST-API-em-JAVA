@@ -2,6 +2,9 @@ package io.thomaslincoln.restapi.models;
 
 import java.util.List;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.annotation.JsonProperty.Access;
+
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -55,8 +58,10 @@ public class Receita {
   @Column(name = "dificuldade", length = 10, nullable = false)
   private String dificuldade;
 
+  
   @ManyToOne
   @JoinColumn(name = "usuario_id", nullable = false, updatable = false)
+  @JsonProperty(access = Access.WRITE_ONLY)
   private Usuario usuario;
 
   // Relacionamento
