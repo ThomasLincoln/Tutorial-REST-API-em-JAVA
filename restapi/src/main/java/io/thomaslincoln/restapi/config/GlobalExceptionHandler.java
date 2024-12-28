@@ -15,6 +15,9 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.context.request.WebRequest;
 import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler;
 
+import io.thomaslincoln.restapi.services.exceptions.DataBindingViolationException;
+import io.thomaslincoln.restapi.services.exceptions.ObjectNotFoundException;
+import jakarta.validation.ConstraintViolationException;
 import lombok.extern.slf4j.Slf4j;
 
 @RestControllerAdvice
@@ -65,10 +68,60 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
     String errorMessage = ex.getMostSpecificCause().getMessage();
     log.error("Failed to save entity with integrity problems: " + errorMessage, ex);
     return buildErrorResponse(
-      ex,
-      errorMessage,
-      HttpStatus.CONFLICT,
-      request);
+        ex,
+        errorMessage,
+        HttpStatus.CONFLICT,
+        request);
+  }
+
+  // Exceções de Violação de Restrição (422)
+  @ExceptionHandler(ConstraintViolationException.class)
+  @ResponseStatus(HttpStatus.UNPROCESSABLE_ENTITY)
+  public ResponseEntity<Object> handleConstraintViolationException(
+      ConstraintViolationException constraintViolationException,
+      WebRequest request) {
+    log.error("Failed to validate element", constraintViolationException);
+    return buildErrorResponse(
+        constraintViolationException,
+        HttpStatus.UNPROCESSABLE_ENTITY,
+        request);
+  }
+
+  // Exceções de Objeto Não Encontrado (404)
+  @ExceptionHandler(ObjectNotFoundException.class)
+  @ResponseStatus(HttpStatus.NOT_FOUND)
+  public ResponseEntity<Object> handleObjectNotFoundException(
+      ObjectNotFoundException exception,
+      WebRequest request) {
+    log.error("Failed to find the requested element", exception);
+    return buildErrorResponse(
+        exception,
+        HttpStatus.NOT_FOUND,
+        request);
+  }
+
+  // Exceções de Violação de Associação de Dados (409)
+  @ExceptionHandler(DataBindingViolationException.class)
+  @ResponseStatus(HttpStatus.CONFLICT)
+  public ResponseEntity<Object> handleDataBindingViolationException(
+      DataBindingViolationException exception,
+      WebRequest request) {
+    log.error("Failed to save entity with associated data", exception);
+    return buildErrorResponse(
+        exception,
+        HttpStatus.CONFLICT,
+        request);
+  }
+
+  private ResponseEntity<Object> buildErrorResponse(
+      Exception exception,
+      HttpStatus httpStatus,
+      WebRequest request) {
+    return buildErrorResponse(
+        exception,
+        exception.getMessage(),
+        httpStatus,
+        request);
   }
 
   private ResponseEntity<Object> buildErrorResponse(
