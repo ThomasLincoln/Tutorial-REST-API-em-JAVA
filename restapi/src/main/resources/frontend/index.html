@@ -1,126 +1,36 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="pt-BR">
+
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Cadastro e Login</title>
-  <style>
-    body {
-      font-family: Arial, sans-serif;
-      background-color: #f4f4f9;
-      margin: 0;
-      padding: 20px;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-    }
-    form {
-      background: white;
-      padding: 20px;
-      border-radius: 5px;
-      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-      margin-bottom: 20px;
-      width: 400px;
-    }
-    form h2 {
-      margin-top: 0;
-    }
-    input {
-      width: 95%;
-      padding: 10px;
-      margin: 10px 0;
-      border: 1px solid #ccc;
-      border-radius: 3px;
-    }
-    button {
-      background: #007BFF;
-      color: white;
-      border: none;
-      padding: 10px;
-      border-radius: 3px;
-      cursor: pointer;
-    }
-    button:hover {
-      background: #0056b3;
-    }
-  </style>
+  <title>Consumidor da API</title>
+  <link rel="stylesheet" href="style.css">
 </head>
+
 <body>
-  <h1>Cadastro e Login</h1>
+  <div class="container">
+    <h1>Buscar Usuário</h1>
+    <input type="text" id="userId" placeholder="Digite o ID do usuário">
+    <button onclick="getUser()">Buscar Usuário</button>
+    <div class="result" id="userResult"></div>
 
-  <form id="registerForm">
-    <h2>Cadastro</h2>
-    <input type="text" id="registerName" placeholder="Nome" required>
-    <input type="email" id="registerEmail" placeholder="Email" required>
-    <input type="password" id="registerPassword" placeholder="Senha" required>
-    <button type="submit">Cadastrar</button>
-  </form>
+    <h1>Buscar Receita</h1>
+    <input type="text" id="receitaId" placeholder="Digite o ID da receita">
+    <button onclick="getReceita()">Buscar Receita</button>
+    <div class="result" id="receitaResult"></div>
 
-  <form id="loginForm">
-    <h2>Login</h2>
-    <input type="email" id="loginEmail" placeholder="Email" required>
-    <input type="password" id="loginPassword" placeholder="Senha" required>
-    <button type="submit">Entrar</button>
-  </form>
+    <h1>Buscar Receitas de um Usuário</h1>
+    <input type="text" id="findUserId" placeholder="Digite o ID do usuário" />
+    <button onclick="getReceitasByUser()">Buscar Receitas</button>
+    <div class="result" id="userReceitasResult"></div>
 
-  <script>
-    const apiBaseUrl = 'http://localhost:8080/usuario'; // Substitua pelo endereço correto da sua API
-
-    // Função para cadastrar um usuário
-    document.getElementById('registerForm').addEventListener('submit', async (e) => {
-      e.preventDefault();
-
-      const name = document.getElementById('registerName').value;
-      const email = document.getElementById('registerEmail').value;
-      const password = document.getElementById('registerPassword').value;
-
-      const userData = { nome: name, email, senha: password };
-
-      try {
-        const response = await fetch(apiBaseUrl, {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify(userData),
-        });
-
-        if (response.ok) {
-          alert('Usuário cadastrado com sucesso!');
-          document.getElementById('registerForm').reset();
-        } else {
-          alert('Erro ao cadastrar usuário.');
-        }
-      } catch (error) {
-        console.error('Erro:', error);
-      }
-    });
-
-    // Função para logar o usuário
-    document.getElementById('loginForm').addEventListener('submit', async (e) => {
-      e.preventDefault();
-
-      const email = document.getElementById('loginEmail').value;
-      const password = document.getElementById('loginPassword').value;
-
-      try {
-        // Aqui você deve implementar a lógica de autenticação da sua API
-        const response = await fetch(`${apiBaseUrl}/login`, {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ email, senha: password }),
-        });
-
-        if (response.ok) {
-          const data = await response.json();
-          localStorage.setItem('userSession', JSON.stringify(data)); // Salva os dados do usuário no localStorage
-          alert('Login realizado com sucesso!');
-          document.getElementById('loginForm').reset();
-        } else {
-          alert('Erro ao realizar login.');
-        }
-      } catch (error) {
-        console.error('Erro:', error);
-      }
-    });
-  </script>
+    <h1>Buscar Ingrediente</h1>
+    <input type="text" id="ingredienteId" placeholder="Digite o ID do ingrediente" />
+    <button onclick="getIngrediente()">Buscar Ingrediente</button>
+    <div class="result" id="ingredienteResult"></div>
+  </div>
+  <script src="script.js"></script>
 </body>
+
 </html>

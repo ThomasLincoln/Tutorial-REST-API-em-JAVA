@@ -1,102 +1,162 @@
-const API_BASE = "http://localhost:8080";
+async function getUser() {
+  const userId = document.getElementById("userId").value;
+  const resultDiv = document.getElementById("userResult");
 
-// Funções de Usuários
-async function fetchUsuarios() {
-  const response = await fetch(`${API_BASE}/usuario`);
-  const usuarios = await response.json();
-  const usuarioList = document.getElementById("usuario-list");
-  usuarioList.innerHTML = "";
+  if (!userId) {
+    resultDiv.innerHTML = "Por favor insira o ID!";
+    return;
+  }
 
-  usuarios.forEach((usuario) => {
-    const li = document.createElement("li");
-    li.textContent = `${usuario.nome} - ${usuario.email}`;
-    const deleteButton = document.createElement("button");
-    deleteButton.textContent = "Deletar";
-    deleteButton.onclick = () => deleteUsuario(usuario.id);
-    li.appendChild(deleteButton);
-    usuarioList.appendChild(li);
-  });
+  try {
+    const response = await fetch(`http://localhost:8080/usuario/${userId}`);
+    if (!response.ok) {
+      throw new Error(`Erro: ${response.status} ${response.statusText}`)
+    }
+    const user = await response.json();
+    resultDiv.innerHTML = `
+      <strong>Usuário Encontrado:</strong><br>
+      ID: ${user.id}<br>
+      Nome: ${user.nome}<br>
+      Email: ${user.email}<br>
+    `
+  } catch (error) {
+    resultDiv.innerHTML = `Erro ao buscar o usuário: ${error.message}`;
+  }
 }
 
-async function createUsuario(event) {
-  event.preventDefault();
-  const nome = document.getElementById("usuario-nome").value;
-  const email = document.getElementById("usuario-email").value;
+async function getReceita() {
+  const receitaId = document.getElementById("receitaId").value;
+  const resultDiv = document.getElementById("receitaResult");
 
-  await fetch(`${API_BASE}/usuario`, {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ nome, email }),
-  });
+  if (!receitaId) {
+    resultDiv.innerHTML = "Por favor insira o ID!";
+    return;
+  }
 
-  fetchUsuarios();
+  try {
+    const response = await fetch(`http://localhost:8080/receita/${receitaId}`);
+    let ingredientesList = "";
+
+    if (!response.ok) {
+      throw new Error(`Erro: ${response.status} ${response.statusText}`)
+    }
+    const receita = await response.json();
+
+    if (receita.ingredientes && receita.ingredientes.length > 0) {
+      receita.ingredientes.forEach((item) => {
+        ingredientesList += `
+          <li>
+          Ingrediente Id: ${item.ingrediente}, 
+          Quantidade: ${item.quantidade},
+          Unidade: ${item.unidade}
+          </li>
+        `
+      })
+    } else {
+      ingredientesList = "<li>Sem ingredientes cadastrados.</li>";
+    }
+
+    resultDiv.innerHTML = `
+      <strong>Receita Encontrado:</strong><br>
+      ID: ${receita.id}<br>
+      Nome: ${receita.nome}<br>
+      Descrição: ${receita.descricao}<br>
+      Tempo de Preparo: ${receita.tempoDePreparo} minutos<br>
+      Modo de Preparo: ${receita.modoDePreparo}<br>
+      Dificuldade: ${receita.dificuldade}<br>
+      <strong>Ingredientes:</strong>
+      <ul class="ingredients">
+        ${ingredientesList}
+      </ul>
+    `
+  } catch (error) {
+    resultDiv.innerHTML = `Erro ao buscar a receita: ${error.message}`;
+  }
 }
 
-async function deleteUsuario(id) {
-  await fetch(`${API_BASE}/usuario/${id}`, { method: "DELETE" });
-  fetchUsuarios();
+async function getIngrediente() {
+  const ingredienteId = document.getElementById("ingredienteId").value;
+  const resultDiv = document.getElementById("ingredienteResult");
+
+  if (!ingredienteId) {
+    resultDiv.innerHTML = "Por favor, insira um ID.";
+    return;
+  }
+
+  try {
+    const response = await fetch(
+      `http://localhost:8080/ingrediente/${ingredienteId}`
+    );
+    if (!response.ok) {
+      throw new Error(`Erro: ${response.status} ${response.statusText}`);
+    }
+
+    const ingrediente = await response.json();
+    resultDiv.innerHTML = `
+  <strong>Ingrediente Encontrado:</strong><br>
+  ID: ${ingrediente.id}<br>
+  Nome: ${ingrediente.nome}<br>
+  Unidade: ${ingrediente.unidade}<br>
+`;
+  } catch (error) {
+    resultDiv.innerHTML = `Erro ao buscar o ingrediente: ${error.message}`;
+  }
 }
 
-// Funções de Receitas
-async function fetchReceitas() {
-  const response = await fetch(`${API_BASE}/receita`);
-  const receitas = await response.json();
-  const receitaList = document.getElementById("receita-list");
-  receitaList.innerHTML = "";
+async function getReceitasByUser() {
+  const userId = document.getElementById("findUserId").value;
+  const resultDiv = document.getElementById("userReceitasResult");
 
-  receitas.forEach((receita) => {
-    const li = document.createElement("li");
-    li.textContent = receita.nome;
-    receitaList.appendChild(li);
-  });
+  if (!userId) {
+    resultDiv.innerHTML = "Por favor, insira um ID.";
+    return;
+  }
+
+  try {
+    const response = await fetch(
+      `http://localhost:8080/receita/usuario/${userId}`
+    );
+    if (!response.ok) {
+      throw new Error(`Erro: ${response.status} ${response.statusText}`);
+    }
+
+    const receitas = await response.json();
+    if (receitas.length === 0) {
+      resultDiv.innerHTML = "Nenhuma receita encontrada para este usuário.";
+      return;
+    }
+
+    let receitasHtml = "";
+    receitas.forEach((receita) => {
+      let ingredientesList = "";
+      if (receita.ingredientes && receita.ingredientes.length > 0) {
+        receita.ingredientes.forEach((item) => {
+          ingredientesList += `<li>Ingrediente ID: ${item.ingrediente}, Quantidade: ${item.quantidade} ${item.unidade}</li>`;
+        });
+      } else {
+        ingredientesList = "<li>Sem ingredientes cadastrados.</li>";
+      }
+
+      receitasHtml += `
+      <div>
+          <strong>Receita:</strong><br>
+          ID: ${receita.id}<br>
+          Nome: ${receita.nome}<br>
+          Descrição: ${receita.descricao}<br>
+          Tempo de Preparo: ${receita.tempoDePreparo} minutos<br>
+          Modo de Preparo: ${receita.modoDePreparo}<br>
+          Dificuldade: ${receita.dificuldade}<br>
+          <strong>Ingredientes:</strong>
+          <ul class="ingredients">
+              ${ingredientesList}
+          </ul>
+          <hr>
+      </div>
+  `;
+    });
+
+    resultDiv.innerHTML = receitasHtml;
+  } catch (error) {
+    resultDiv.innerHTML = `Erro ao buscar as receitas: ${error.message}`;
+  }
 }
-
-async function createReceita(event) {
-  event.preventDefault();
-  const nome = document.getElementById("receita-nome").value;
-
-  await fetch(`${API_BASE}/receita`, {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ nome }),
-  });
-
-  fetchReceitas();
-}
-
-// Funções de Ingredientes
-async function fetchIngredientes() {
-  const response = await fetch(`${API_BASE}/ingrediente`);
-  const ingredientes = await response.json();
-  const ingredienteList = document.getElementById("ingrediente-list");
-  ingredienteList.innerHTML = "";
-
-  ingredientes.forEach((ingrediente) => {
-    const li = document.createElement("li");
-    li.textContent = ingrediente.nome;
-    ingredienteList.appendChild(li);
-  });
-}
-
-async function createIngrediente(event) {
-  event.preventDefault();
-  const nome = document.getElementById("ingrediente-nome").value;
-
-  await fetch(`${API_BASE}/ingrediente`, {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ nome }),
-  });
-
-  fetchIngredientes();
-}
-
-// Inicializar eventos
-document.getElementById("usuario-form").addEventListener("submit", createUsuario);
-document.getElementById("receita-form").addEventListener("submit", createReceita);
-document.getElementById("ingrediente-form").addEventListener("submit", createIngrediente);
-
-// Carregar dados iniciais
-fetchUsuarios();
-fetchReceitas();
-fetchIngredientes();
