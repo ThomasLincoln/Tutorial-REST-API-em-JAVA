@@ -22,7 +22,7 @@ public class JWTUtil {
     return key;
   }
 
-  private String generateToken(String username) {
+  public String generateToken(String username) {
     SecretKey key = getKeyBySecret();
     return Jwts.builder()
         .subject(username)

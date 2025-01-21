@@ -6,6 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
+import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
@@ -16,6 +17,7 @@ import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 
+import io.thomaslincoln.restapi.security.JWTAuthenticationFilter;
 import io.thomaslincoln.restapi.security.JWTUtil;
 
 @Configuration
@@ -25,6 +27,8 @@ public class SecurityConfig {
 
   @Autowired
   private JWTUtil jwtUtil;
+
+  private AuthenticationManager authenticationManager;
 
   private static final String[] PUBLIC_MATCHERS = {
       "/"
@@ -59,16 +63,21 @@ public class SecurityConfig {
     http.cors(cors -> cors.disable());
     http.csrf(csrf -> csrf.disable());
 
+    
     http.authorizeHttpRequests(
-        auth -> auth
-            .requestMatchers(HttpMethod.POST, PUBLIC_MATCHERS_POST).permitAll()
-            .requestMatchers(HttpMethod.GET, PUBLIC_MATCHERS_GET).permitAll()
-            .requestMatchers(HttpMethod.PUT, PUBLIC_MATCHERS_PUT).permitAll()
-            .requestMatchers(HttpMethod.DELETE, PUBLIC_MATCHERS_DELETE).permitAll()
-            .requestMatchers(PUBLIC_MATCHERS).permitAll()
-            .anyRequest().authenticated());
-    http.sessionManagement(sess -> sess.sessionCreationPolicy(SessionCreationPolicy.STATELESS));
-    return http.build();
+      auth -> auth
+      .requestMatchers(HttpMethod.POST, PUBLIC_MATCHERS_POST).permitAll()
+      .requestMatchers(HttpMethod.GET, PUBLIC_MATCHERS_GET).permitAll()
+      .requestMatchers(HttpMethod.PUT, PUBLIC_MATCHERS_PUT).permitAll()
+      .requestMatchers(HttpMethod.DELETE, PUBLIC_MATCHERS_DELETE).permitAll()
+      .requestMatchers(PUBLIC_MATCHERS).permitAll()
+      .anyRequest().authenticated());
+
+      http.authenticationManager(authenticationManager);
+      http.addFilter(new JWTAuthenticationFilter(this.authenticationManager, this.jwtUtil));
+
+      http.sessionManagement(sess -> sess.sessionCreationPolicy(SessionCreationPolicy.STATELESS));
+      return http.build();
   }
 
   @Bean
