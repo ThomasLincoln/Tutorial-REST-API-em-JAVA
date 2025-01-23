@@ -11,6 +11,7 @@ import org.springframework.security.config.annotation.method.configuration.Enabl
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.http.SessionCreationPolicy;
+import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.web.cors.CorsConfiguration;
@@ -18,6 +19,7 @@ import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 
 import io.thomaslincoln.restapi.security.JWTAuthenticationFilter;
+import io.thomaslincoln.restapi.security.JWTAuthorizationFilter;
 import io.thomaslincoln.restapi.security.JWTUtil;
 
 @Configuration
@@ -29,6 +31,9 @@ public class SecurityConfig {
   private JWTUtil jwtUtil;
 
   private AuthenticationManager authenticationManager;
+
+  @Autowired
+  private UserDetailsService userDetailsService;
 
   private static final String[] PUBLIC_MATCHERS = {
       "/"
@@ -75,7 +80,7 @@ public class SecurityConfig {
 
       http.authenticationManager(authenticationManager);
       http.addFilter(new JWTAuthenticationFilter(this.authenticationManager, this.jwtUtil));
-
+      http.addFilter(new JWTAuthorizationFilter(this.authenticationManager, this.jwtUtil, this.userDetailsService));
       http.sessionManagement(sess -> sess.sessionCreationPolicy(SessionCreationPolicy.STATELESS));
       return http.build();
   }

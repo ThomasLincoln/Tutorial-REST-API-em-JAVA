@@ -56,4 +56,12 @@ public class JWTUtil {
       return null;
     }
   }
+
+  public String getUsername(String token){
+    Claims claims = getClaims(token);
+    if(Objects.nonNull(claims)){
+      return claims.getSubject();
+    }
+    return null;
+  }
 }
